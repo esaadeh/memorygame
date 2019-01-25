@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './App.css';
 import cards from "./cards.json";
 import Scoreboard from "./components/Scoreboard";
 import Card from "./components/Card";
@@ -7,46 +6,56 @@ import Card from "./components/Card";
 class App extends Component {
 
   state = {
-    randomNum: 0,
+    randomId: 1,
     score: 0,
     tally: 0,
-    objects: cards
+    chihuahuas: cards
   };
 
-  handleClick = id => {
+  componentDidMount() {
+    this.setNewRandomId(this.state.chihuahuas);
+  }
+  
+  handleClicked = id => {
     this.setState({
       tally: this.state.tally + 1
     });
-    alert(`Clicked object: ${id}`);
+    if(this.state.randomId === id) {
+      this.setState({
+        score: this.state.score + 1
+      });
+      this.setNewRandomId(this.state.chihuahuas);
+    }
   }
+
+  setNewRandomId = (array) => {
+    const randomId = array[Math.floor(Math.random()*array.length)].id;
+    this.setState({
+      randomId: randomId
+    });
+  }
+  
 
   render() {
     return (
       <div className="container">
-       <Scoreboard score={this.state.score} tally={this.state.tally}/>
-            <div className="row">
-          {this.state.objects.map(object => (
-            // <div 
-            // style={{backgroundImage: `url(${object.image})`}}
-            // key={object.id}
-            // className="chi-card col-md-4" 
-            // // () => is to not run the on click when rendering the object but wait for onClicks
-            // onClick={() => this.handleClick(object.id)}
-            // >
-            // {object.name}
-            // </div>
+        <Scoreboard 
+          title="Chihuahua Clicker 2019"
+          score={this.state.score} 
+          tally={this.state.tally} 
+          randomId={this.state.randomId} 
+        />
+        <div className="row">
+          {this.state.chihuahuas.map(chihuahua => (
             <Card 
-            id={object.id}
-            key={object.id}
-            name={object.name}
-            image={object.image}
-            handleClick={this.handleClick}
-
+              key={chihuahua.id}
+              id={chihuahua.id}
+              name={chihuahua.name}
+              image={chihuahua.image}
+              handleClicked={this.handleClicked}
             />
           ))}
-
         </div>
-
       </div>
     );
   }
